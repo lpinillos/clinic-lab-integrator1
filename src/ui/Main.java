@@ -15,6 +15,8 @@ public class Main {
     private static Heap<String> queuePriority;
     private static Heap<String> queue;
     private static ArrayList<Patient> inLab;
+    private static Patient[] code;
+    private static int count = 0;
     private static int countEnteredPacient = 0;
 
     public static void main(String[] args) {
@@ -23,6 +25,7 @@ public class Main {
         queuePriority = new Heap<>();
         queue = new Heap<>();
         inLab = new ArrayList<>();
+        code = new Patient[1];
 
         int exit = 0;
         System.out.println("Inicializando programa");
@@ -99,21 +102,43 @@ public class Main {
 
                             }
                         }
+                        code[0] = patients.search(queue.heapMaximum());
                         queuePriority.heapExtracMax();
+                        count = 2;
                     }
                     break;
                 case 3:
+                    if (countEnteredPacient == 0) {
+                        System.out.println("No se ha ingresado ningun paciente!");
+                    } else {
+                        System.out.println("Pasar el paciente:");
+                        System.out.println(patients.search(queue.heapMaximum()).getId() + "\n" +
+                                patients.search(queue.heapMaximum()).getName() + "\n" +
+                                patients.search(queue.heapMaximum()).getLastName());
 
+                        System.out.println("Salida del paciente:");
+                        System.out.println(patients.search(queue.heapMaximum()).getId() + "\n" +
+                                patients.search(queue.heapMaximum()).getName() + "\n" +
+                                patients.search(queue.heapMaximum()).getLastName());
+
+                        for (int i = 0; i < inLab.size(); i++) {
+                            if (inLab.get(i).getId().equals(patients.search(queue.heapMaximum()).getId())) {
+                                inLab.remove(i);
+                                break;
+                            }
+                        }
+                        queue.heapExtracMax();
+                    }
 
                     break;
                 case 4:
-
 
                     break;
                 case 5:
 
                     break;
                 case 6:
+
 
                     break;
                 case 7:
@@ -187,9 +212,11 @@ public class Main {
 
             patients.insert(id, new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0));
             inLab.add(new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0));
+            code[0] = new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0);
 
 
         }
+        count = 1;
 
 
         if (patients.search(id).getPriority() > 0) { //map
