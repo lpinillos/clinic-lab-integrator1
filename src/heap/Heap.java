@@ -1,5 +1,8 @@
 package heap;
 
+import hashtables.HNode;
+
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class Heap<V> implements IPriorityQueue<V> {
@@ -123,9 +126,13 @@ public class Heap<V> implements IPriorityQueue<V> {
     public String print(){
         String msg = "";
         for (int i = 0; i < arr.size(); i++) {
-            msg += arr.get(i).getValue() + " ";
+            msg += arr.get(i) + " ";
         }
         return msg;
+    }
+
+    public int length(){
+        return arr.size();
     }
 
 }
