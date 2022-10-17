@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import hashtables.ChainHashTable;
 import heap.Heap;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
@@ -62,17 +63,18 @@ public class Main {
 
 
         while (exit == 0) {
-            System.out.println("""
-                    ===========================
-                    1. Ingresar paciente\s
-                    2. Atender cola de prioridad\s
-                    3. Atender cola\s
-                    4. Personas en el laboratorio\s
-                    5. Orden de atencion\s
-                    6. Deshacer salida o entrada de paciente\s
-                    7. Acabar programa\s
-                    ===========================""");
-            int option = sc.nextInt();
+            int option = Integer.parseInt(JOptionPane.showInputDialog(null,
+                    """
+                            |=========================================|
+                            |1. Ingresar paciente                                                        |
+                            |2. Verificar ingreso de paciente                                    |
+                            |3. Atender cola de prioridad                                          |
+                            |4. Atender cola                                                                |
+                            |5. Personas en el laboratorio                                        |
+                            |6. Orden de atencion                                                      |
+                            |7. Deshacer salida o entrada de paciente                   |
+                            |8. Acabar programa                                                        |
+                            |=========================================|"""));
 
             switch (option) {
                 case 1:
@@ -82,16 +84,22 @@ public class Main {
                     break;
 
                 case 2:
+
+                    verficarIngreso();
+                    break;
+
+                case 3:
+                    queue.print();
                     if (countEnteredPacient == 0) {
-                        System.out.println("No se han ingresado pacientes");
+                        JOptionPane.showMessageDialog(null,"No se han ingresado pacientes" );
                     } else {
-                        System.out.println("Pasar el paciente:");
-                        System.out.println(patients.search(queuePriority.heapMaximum()).getId() + "\n" +
+                        JOptionPane.showMessageDialog(null,"Pasar al paciente: " + "\n" +
+                                patients.search(queuePriority.heapMaximum()).getId() + "\n" +
                                 patients.search(queuePriority.heapMaximum()).getName() + "\n" +
                                 patients.search(queuePriority.heapMaximum()).getLastName());
 
-                        System.out.println("Salida del paciente:");
-                        System.out.println(patients.search(queuePriority.heapMaximum()).getId() + "\n" +
+                        JOptionPane.showMessageDialog(null,"Salida del paciente:" + "\n" +
+                                patients.search(queuePriority.heapMaximum()).getId() + "\n" +
                                 patients.search(queuePriority.heapMaximum()).getName() + "\n" +
                                 patients.search(queuePriority.heapMaximum()).getLastName());
 
@@ -107,17 +115,17 @@ public class Main {
                         count = 2;
                     }
                     break;
-                case 3:
+                case 4:
                     if (countEnteredPacient == 0) {
-                        System.out.println("No se ha ingresado ningun paciente!");
+                        JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
                     } else {
-                        System.out.println("Pasar el paciente:");
-                        System.out.println(patients.search(queue.heapMaximum()).getId() + "\n" +
+                        JOptionPane.showMessageDialog(null,"Pasar el paciente:" + "\n" +
+                                patients.search(queue.heapMaximum()).getId() + "\n" +
                                 patients.search(queue.heapMaximum()).getName() + "\n" +
                                 patients.search(queue.heapMaximum()).getLastName());
 
-                        System.out.println("Salida del paciente:");
-                        System.out.println(patients.search(queue.heapMaximum()).getId() + "\n" +
+                        JOptionPane.showMessageDialog(null,"Salida del paciente:" + "\n" +
+                                patients.search(queue.heapMaximum()).getId() + "\n" +
                                 patients.search(queue.heapMaximum()).getName() + "\n" +
                                 patients.search(queue.heapMaximum()).getLastName());
 
@@ -127,11 +135,11 @@ public class Main {
                                 break;
                             }
                         }
-                        queue.heapExtracMax();
-                    }
 
-                    break;
-                case 4:
+                        code[0] = patients.search(queue.heapMaximum());
+                        queue.heapExtracMax();
+                        count = 2;
+                    }
 
                     break;
                 case 5:
@@ -139,85 +147,83 @@ public class Main {
                     break;
                 case 6:
 
-
                     break;
                 case 7:
-                    System.out.println("Gracias por usar el programa\n");
+
+
+                    break;
+                case 8:
+                    JOptionPane.showMessageDialog(null,"Gracias por usar el programa!\n");
                     exit++;
             }
         }
     }
 
+    public static void verficarIngreso() {
+        String id = JOptionPane.showInputDialog("Ingrese cedula del paciente");
+        String disease = "";
+/*
+        if (patients.search(id).getEnfermedad() == null) {
+            disease = "ninguna";
+        }
+
+ */
+        if (patients.search(id).getId().equals(id)) {
+            JOptionPane.showMessageDialog(null, "Nombre: " + patients.search(id).getName()
+                    + " " + patients.search(id).getLastName() + "\n" + "Edad: " + patients.search(id).getAge() + "\n" + "Id: " + patients.search(id).getId() + "\n" +
+                    "Genero: " + patients.search(id).getGender() + "\n" + "Embarazo: " + patients.search(id).isPregnant() + "\nEnfermedad: " + patients.search(id).getEnfermedad() +
+                    "\n" + "Prioridad?: " + patients.search(id).getPriority() + "\n" + "Importancia: " + patients.search(id).getImportance());
+        }
+
+        inLab.add(new Patient(patients.search(id).getId(),
+                patients.search(id).getName(),
+                patients.search(id).getLastName(),
+                patients.search(id).getGender(),
+                patients.search(id).getAge(),
+                patients.search(id).isPregnant(),
+                patients.search(id).getEnfermedad(),
+                patients.search(id).getImportance().ordinal() + 1,
+                patients.search(id).getPriority()));
+
+        patients.insert(id, new Patient(id,
+                patients.search(id).getName(),
+                patients.search(id).getLastName(),
+                patients.search(id).getGender(),
+                patients.search(id).getAge(),
+                patients.search(id).isPregnant(),
+                patients.search(id).getEnfermedad(),
+                patients.search(id).getPriority(),
+                patients.search(id).getImportance().ordinal() + 1));
+
+    }
+
     public static void IngresoPaciente() {
 
-        System.out.println("Ingrese la cedula del paciente");
-        String id = sc.next();
+        String id = JOptionPane.showInputDialog("Ingrese la cedula del paciente");
 
+        String name = JOptionPane.showInputDialog("Ingrese el nombre del paciente");
 
-        if (patients.search(id).getId().equals(id)) {
-            System.out.println(patients.search(id).getId() + "\n" +
-                    patients.search(id).getName() + "\n" +
-                    patients.search(id).getLastName() + "\n" +
-                    patients.search(id).getGender() + "\n" +
-                    patients.search(id).getAge() + "\n" +
-                    patients.search(id).isPregnant() + "\n" +
-                    patients.search(id).getEnfermedad() + "\n" +
-                    patients.search(id).getImportance() + "\n" +
-                    patients.search(id).getPriority());
+        String lastName = JOptionPane.showInputDialog("Ingrese el apellido del paciente");
 
-            inLab.add(new Patient(patients.search(id).getId(),
-                    patients.search(id).getName(),
-                    patients.search(id).getLastName(),
-                    patients.search(id).getGender(),
-                    patients.search(id).getAge(),
-                    patients.search(id).isPregnant(),
-                    patients.search(id).getEnfermedad(),
-                    patients.search(id).getImportance().ordinal() + 1,
-                    patients.search(id).getPriority()));
+        String gender = JOptionPane.showInputDialog("Ingrese el genero del paciente");
 
-            patients.insert(id, new Patient(id,
-                    patients.search(id).getName(),
-                    patients.search(id).getLastName(),
-                    patients.search(id).getGender(),
-                    patients.search(id).getAge(),
-                    patients.search(id).isPregnant(),
-                    patients.search(id).getEnfermedad(),
-                    patients.search(id).getPriority(),
-                    patients.search(id).getImportance().ordinal() + 1));
-        } else {
-            System.out.println("El paciente no ha sido agregado");
+        int age = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la edad del paciente"));
 
-            System.out.println("Ingrese el nombre del paciente");
-            String name = sc.next();
+        boolean pregnancy = Boolean.parseBoolean(JOptionPane.showInputDialog("El paciente se encuentra embarazado?"));
 
-            System.out.println("Ingrese el apellido del paciente");
-            String lastName = sc.next();
+        String ill = JOptionPane.showInputDialog("Ingrese la enfermedad que tenga el paciente" +
+                "\ncoloque *ninguna* si el paciente no tiene enfermedad alguna ");
 
-            System.out.println("Ingrese el genero del paciente");
-            String gender = sc.next();
+        int importance = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la gravedad de la situacion actual del paciente" +
+                "\nDigite 1 -> NONE, 2 -> LOW, 3 -> MODERATE, 4 -> INTERMEDIATE, 5 -> SERIOUS, 6 -> GRAVE, 7 -> CRITICAL"));
 
-            System.out.println("Ingrese la edad del paciente");
-            int age = sc.nextInt();
+        patients.insert(id, new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0));
+        inLab.add(new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0));
+        code[0] = new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0);
 
-            System.out.println("El paciente se encuentra embarazado?");
-            boolean pregnancy = sc.nextBoolean();
-
-            System.out.println("Ingrese la enfermedad que tenga el paciente");
-            System.out.println("Dejelo en blanco si no posee ninguna");
-            String ill = sc.next();
-
-            System.out.println("Ingrese la gravedad de la situacion actual del paciente");
-            System.out.println("Digite 1 -> NONE, 2 -> LOW, 3 -> MODERATE, 4 -> INTERMEDIATE, 5 -> SERIOUS, 6 -> GRAVE, 7 -> CRITICAL");
-            int importance = sc.nextInt();
-
-            patients.insert(id, new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0));
-            inLab.add(new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0));
-            code[0] = new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0);
-
-
-        }
         count = 1;
 
+        JOptionPane.showMessageDialog(null, "Paciente agregado con exito!");
 
         if (patients.search(id).getPriority() > 0) { //map
             queuePriority.HeapInsert(id, patients.search(id).getPriority());
