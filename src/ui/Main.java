@@ -28,7 +28,7 @@ public class Main {
         code = new Patient[1];
 
         int exit = 0;
-        System.out.println("Inicializando programa");
+        JOptionPane.showMessageDialog(null, "Inicializando programa");
 
         /*
         try {
@@ -69,10 +69,14 @@ public class Main {
                             |2. Atender cola de prioridad                                          |
                             |3. Atender cola                                                                |
                             |4. Personas en el laboratorio                                        |
-                            |5. Orden de atencion                                                      |
+                            |5. Orden de atención                                                      |
                             |6. Deshacer salida o entrada de paciente                   |
                             |7. Acabar programa                                                        |
                             |=========================================|"""));
+
+            if (String.valueOf(option).equals("")) {
+                JOptionPane.showMessageDialog(null, "Please enter an option!");
+            }
 
             switch (option) {
                 case 1:
@@ -105,6 +109,7 @@ public class Main {
                         queuePriority.heapExtracMax();
                         count = 2;
                     }
+
                     break;
                 case 3:
                     if (queue.length() <= 0) {
@@ -154,10 +159,10 @@ public class Main {
                     break;
                 case 5:
                     //REVISAR EL PRINT
-
-                    if(queuePriority.length() <= 0 || queue.length() <= 0){
+                    JOptionPane.showMessageDialog(null, queue.print());
+                    if (queuePriority.length() <= 0 || queue.length() <= 0) {
                         JOptionPane.showMessageDialog(null, "There are no pacients entered yet");
-                    }else{
+                    } else {
                         int uni = Integer.parseInt(JOptionPane.showInputDialog(null, "Que unidad desea consultar?" +
                                 "\nIngrese 1 -> Prioridad o 2 -> Normal"));
                         if (uni == 1) {
@@ -203,6 +208,9 @@ public class Main {
                 case 7:
                     JOptionPane.showMessageDialog(null, "Gracias por usar el programa!\n");
                     exit++;
+
+                default:
+                    JOptionPane.showMessageDialog(null, "Please enter a valid option!");
             }
         }
     }
@@ -212,7 +220,7 @@ public class Main {
 
         String id = JOptionPane.showInputDialog("Ingrese la cedula del paciente");
 
-        if (patients.search(id)!=null && patients.search(id).getId().equals(id)) {
+        if (patients.search(id) != null && patients.search(id).getId().equals(id)) {
             JOptionPane.showMessageDialog(null, "Nombre: " + patients.search(id).getName() + " " + patients.search(id).getLastName() + "\n" +
                     "Edad: " + patients.search(id).getAge() + "\n" +
                     "Id: " + patients.search(id).getId() + "\n" +

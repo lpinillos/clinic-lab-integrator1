@@ -126,11 +126,14 @@ public class Heap<V> implements IPriorityQueue<V> {
     public String print(){
         String msg = "";
         for (int i = 0; i < arr.size(); i++) {
-            msg += arr.get(i) + " ";
+            msg += arr.get(i).getValue() + " ";
         }
         return msg;
     }
 
+    public void delete(){
+        arr.remove(arr.size() - 1);
+    }
     public int length(){
         return arr.size();
     }
