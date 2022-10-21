@@ -260,12 +260,14 @@ public class Main {
                     "\nDigite 1 -> NONE, 2 -> LOW, 3 -> MODERATE, 4 -> INTERMEDIATE, 5 -> SERIOUS, 6 -> GRAVE, 7 -> CRITICAL"));
 
             patients.insert(id, new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0));
-            inLab.add(new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0));
-            code[0] = new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0);
 
             count = 1;
 
             calculatePriority(id);
+
+            inLab.add(new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, patients.search(id).getPriority()));
+            code[0] = new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, patients.search(id).getPriority());
+
             JOptionPane.showMessageDialog(null, "Paciente agregado con exito!");
 
         }
