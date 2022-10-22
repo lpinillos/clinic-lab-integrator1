@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import hashtables.ChainHashTable;
 import heap.Heap;
 
+import model.*;
+
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
@@ -73,13 +75,13 @@ public class Main {
                             |1. Enter patient
                             |2. Attend hematology patient
                             |3. Attend general queue patient
-                            |4. Pacients at the lab
+                            |4. Patients at the lab
                             |5. Attention order
                             |6. Undo entry or exit of pacients
                             |7. End program
                             |=========================================|""");
 
-            if(input.isEmpty()){
+            if (input.isEmpty()) {
                 continue;
             }
 
@@ -125,7 +127,7 @@ public class Main {
 
         String id = JOptionPane.showInputDialog("Enter pacient id");
 
-        while(id.isEmpty()){
+        while (id.isEmpty()) {
             id = JOptionPane.showInputDialog("Enter pacient id");
         }
 
@@ -133,20 +135,20 @@ public class Main {
 
             int importance = 0;
 
-            if(patients.search(id).getImportance().equals(situationImportance.NONE)){
-                importance=1;
-            }else if(patients.search(id).getImportance().equals(situationImportance.LOW)){
-                importance=2;
-            }else if(patients.search(id).getImportance().equals(situationImportance.MODERATE)){
-                importance=3;
-            }else if(patients.search(id).getImportance().equals(situationImportance.INTERMEDIATE)){
-                importance=4;
-            }else if(patients.search(id).getImportance().equals(situationImportance.SERIOUS)){
-                importance=5;
-            }else if(patients.search(id).getImportance().equals(situationImportance.GRAVE)){
-                importance=6;
-            }else if(patients.search(id).getImportance().equals(situationImportance.CRITICAL)){
-                importance=7;
+            if (patients.search(id).getImportance().equals(situationImportance.NONE)) {
+                importance = 1;
+            } else if (patients.search(id).getImportance().equals(situationImportance.LOW)) {
+                importance = 2;
+            } else if (patients.search(id).getImportance().equals(situationImportance.MODERATE)) {
+                importance = 3;
+            } else if (patients.search(id).getImportance().equals(situationImportance.INTERMEDIATE)) {
+                importance = 4;
+            } else if (patients.search(id).getImportance().equals(situationImportance.SERIOUS)) {
+                importance = 5;
+            } else if (patients.search(id).getImportance().equals(situationImportance.GRAVE)) {
+                importance = 6;
+            } else if (patients.search(id).getImportance().equals(situationImportance.CRITICAL)) {
+                importance = 7;
             }
 
             JOptionPane.showMessageDialog(null, "Name: " + patients.search(id).getName() + " " + patients.search(id).getLastName() + "\n" +
@@ -175,14 +177,32 @@ public class Main {
 
             String lastName = JOptionPane.showInputDialog("Enter the last name of the patient");
 
-            String gender = JOptionPane.showInputDialog("Enter the patient's gender");
+            String[] genderOption = {"Masculine", "Femenine"};
+
+            String gender = (String) JOptionPane.showInputDialog(null, "Enter the patient's gender",
+                    "Choose gender", JOptionPane.QUESTION_MESSAGE,
+                    null, genderOption,
+                    genderOption[1]);
 
             int age = Integer.parseInt(JOptionPane.showInputDialog("Enter the age of the patient"));
 
-            boolean pregnancy = Boolean.parseBoolean(JOptionPane.showInputDialog("Is the patient pregnant?"));
+            String[]pregnancyOption = {"true", "false"};
 
-            String ill = JOptionPane.showInputDialog("Enter the disease of the patient" +
-                    "\nenter *none* if the patient have no disease");
+            String pregnancyChoose = (String) JOptionPane.showInputDialog(null,"Is the patient pregnant?",
+                    "Choose pregnancy", JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    pregnancyOption,
+                    pregnancyOption[1]);
+
+            boolean pregnancy = Boolean.parseBoolean(pregnancyChoose);
+
+            String[] optionsToChoose = {"Cancer", "Asthma", "Leukemia", "Bronchitis", "Infection", "Parasites", "None of the listed", "None"};
+
+            String ill = (String) JOptionPane.showInputDialog(null, "Enter the disease of the patient",
+                    "Choose disease", JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    optionsToChoose,
+                    optionsToChoose[3]);
 
             int importance = Integer.parseInt(JOptionPane.showInputDialog("Enter the severity of the patient's condition" +
                     "\nEnter 1 -> NONE, 2 -> LOW, 3 -> MODERATE, 4 -> INTERMEDIATE, 5 -> SERIOUS, 6 -> GRAVE, 7 -> CRITICAL"));
@@ -203,14 +223,14 @@ public class Main {
         int unity = Integer.parseInt(JOptionPane.showInputDialog("Enter the unit to which the patient goes" +
                 "\nEnter 1 -> Hematology, 2 -> General propose"));
 
-        if(unity==1){
+        if (unity == 1) {
             unit = 1;
             if (patients.search(id).getPriority() > 0) { //map
                 queuePriorityH.HeapInsert(id, patients.search(id).getPriority());
             } else {
                 queueH.HeapInsert(id, 1);
             }
-        }else if(unity==2){
+        } else if (unity == 2) {
             unit = 2;
             if (patients.search(id).getPriority() > 0) { //map
                 queuePriorityG.HeapInsert(id, patients.search(id).getPriority());
@@ -231,7 +251,9 @@ public class Main {
             patients.search(id).setPriority(patients.search(id).sumPriority(2));
         }
 
-        if (patients.search(id).getEnfermedad().equals("Cancer")) {
+        if (patients.search(id).getEnfermedad().equals("Cancer") || patients.search(id).getEnfermedad().equals("Leukemia") ||
+                patients.search(id).getEnfermedad().equals("Asthma") || patients.search(id).getEnfermedad().equals("Bronchitis") ||
+                patients.search(id).getEnfermedad().equals("Infection") || patients.search(id).getEnfermedad().equals("Parasites")) {
             patients.search(id).setPriority(patients.search(id).sumPriority(2));
         }
 
@@ -253,28 +275,28 @@ public class Main {
 
     }
 
-    public static void attendH(){
+    public static void attendH() {
 
         if (queueG.length() <= 0 && queuePriorityG.length() <= 0) {
             JOptionPane.showMessageDialog(null, "There is no patient entered yet!");
-        }else {
+        } else {
             int queues = Integer.parseInt(JOptionPane.showInputDialog("Which queue do you want to attend?" + "\n" +
                     "Enter 1 -> priority queue, 2 -> General queue"));
 
             if (queues == 1) {
-                if(queuePriorityG.length() <= 0){
+                if (queuePriorityG.length() <= 0) {
                     JOptionPane.showMessageDialog(null, "There is no patient entered yet!");
-                }else {
+                } else {
                     JOptionPane.showMessageDialog(null, "Patient checkIn: " + "\n" +
-                         "ID: "  + patients.search(queuePriorityH.heapMaximum()).getId() + "\n" +
-                        "Name: " +   patients.search(queuePriorityH.heapMaximum()).getName() + " " +
+                            "ID: " + patients.search(queuePriorityH.heapMaximum()).getId() + "\n" +
+                            "Name: " + patients.search(queuePriorityH.heapMaximum()).getName() + " " +
                             patients.search(queuePriorityH.heapMaximum()).getLastName());
 
                     JOptionPane.showMessageDialog(null, "The patient is now in query");
 
                     JOptionPane.showMessageDialog(null, "Patient checkout:" + "\n" +
-                        "ID: "  +  patients.search(queuePriorityH.heapMaximum()).getId() + "\n" +
-                         "Name: " +  patients.search(queuePriorityH.heapMaximum()).getName() + " " +
+                            "ID: " + patients.search(queuePriorityH.heapMaximum()).getId() + "\n" +
+                            "Name: " + patients.search(queuePriorityH.heapMaximum()).getName() + " " +
                             patients.search(queuePriorityH.heapMaximum()).getLastName());
 
                     for (int i = 0; i < inLab.size(); i++) {
@@ -293,15 +315,15 @@ public class Main {
                     JOptionPane.showMessageDialog(null, "There is no patient entered yet!");
                 } else {
                     JOptionPane.showMessageDialog(null, "Patient checkIn:" + "\n" +
-                          "ID: " +  patients.search(queueH.heapMaximum()).getId() + "\n" +
-                         "Name: " +   patients.search(queueH.heapMaximum()).getName() + " " +
+                            "ID: " + patients.search(queueH.heapMaximum()).getId() + "\n" +
+                            "Name: " + patients.search(queueH.heapMaximum()).getName() + " " +
                             patients.search(queueH.heapMaximum()).getLastName());
 
                     JOptionPane.showMessageDialog(null, "The patient is now in query");
 
                     JOptionPane.showMessageDialog(null, "Patient checkout:" + "\n" +
-                         "ID: " +   patients.search(queueH.heapMaximum()).getId() + "\n" +
-                         "Name: " +   patients.search(queueH.heapMaximum()).getName() + " " +
+                            "ID: " + patients.search(queueH.heapMaximum()).getId() + "\n" +
+                            "Name: " + patients.search(queueH.heapMaximum()).getName() + " " +
                             patients.search(queueH.heapMaximum()).getLastName());
 
                     for (int i = 0; i < inLab.size(); i++) {
@@ -322,27 +344,27 @@ public class Main {
 
     }
 
-    public static void attendG(){
+    public static void attendG() {
 
         if (queueG.length() <= 0 && queuePriorityG.length() <= 0) {
             JOptionPane.showMessageDialog(null, "There is no patient entered yet!");
-        }else {
+        } else {
             int queues2 = Integer.parseInt(JOptionPane.showInputDialog("Which queue do you want to attend?" + "\n" +
                     "Enter 1 -> Priority queue, 2 -> General queue"));
             if (queues2 == 1) {
-                if(queuePriorityG.length() <= 0){
+                if (queuePriorityG.length() <= 0) {
                     JOptionPane.showMessageDialog(null, "There is no patient entered yet!");
-                }else {
+                } else {
                     JOptionPane.showMessageDialog(null, "Patient checkIn " + "\n" +
-                          "ID: " + patients.search(queuePriorityG.heapMaximum()).getId() + "\n" +
-                        "Name: " +   patients.search(queuePriorityG.heapMaximum()).getName() + " " +
+                            "ID: " + patients.search(queuePriorityG.heapMaximum()).getId() + "\n" +
+                            "Name: " + patients.search(queuePriorityG.heapMaximum()).getName() + " " +
                             patients.search(queuePriorityG.heapMaximum()).getLastName());
 
                     JOptionPane.showMessageDialog(null, "The patient is now in query");
 
                     JOptionPane.showMessageDialog(null, "Patient checkout:" + "\n" +
-                         "ID: " +  patients.search(queuePriorityG.heapMaximum()).getId() + "\n" +
-                        "Name: " +   patients.search(queuePriorityG.heapMaximum()).getName() + " " +
+                            "ID: " + patients.search(queuePriorityG.heapMaximum()).getId() + "\n" +
+                            "Name: " + patients.search(queuePriorityG.heapMaximum()).getName() + " " +
                             patients.search(queuePriorityG.heapMaximum()).getLastName());
 
                     for (int i = 0; i < inLab.size(); i++) {
@@ -361,15 +383,15 @@ public class Main {
                     JOptionPane.showMessageDialog(null, "There is no patient entered yet!");
                 } else {
                     JOptionPane.showMessageDialog(null, "Patient checkIn:" + "\n" +
-                          "ID: " + patients.search(queueG.heapMaximum()).getId() + "\n" +
-                          "Name: " +  patients.search(queueG.heapMaximum()).getName() + " " +
+                            "ID: " + patients.search(queueG.heapMaximum()).getId() + "\n" +
+                            "Name: " + patients.search(queueG.heapMaximum()).getName() + " " +
                             patients.search(queueG.heapMaximum()).getLastName());
 
                     JOptionPane.showMessageDialog(null, "The patient is now in query");
 
                     JOptionPane.showMessageDialog(null, "Patient checkout:" + "\n" +
-                        "ID: " +   patients.search(queueG.heapMaximum()).getId() + "\n" +
-                         "Name: " +  patients.search(queueG.heapMaximum()).getName() + " " +
+                            "ID: " + patients.search(queueG.heapMaximum()).getId() + "\n" +
+                            "Name: " + patients.search(queueG.heapMaximum()).getName() + " " +
                             patients.search(queueG.heapMaximum()).getLastName());
 
                     for (int i = 0; i < inLab.size(); i++) {
@@ -390,19 +412,19 @@ public class Main {
 
     }
 
-    public static void patientsInLab(){
+    public static void patientsInLab() {
 
         if (inLab.size() > 0) {
             for (int i = 0; i < inLab.size(); i++) {
-                JOptionPane.showMessageDialog(null,"ID: " + inLab.get(i).getId() + "\n" +
-                   "Name: "  +   inLab.get(i).getName() + " " +
+                JOptionPane.showMessageDialog(null, "ID: " + inLab.get(i).getId() + "\n" +
+                        "Name: " + inLab.get(i).getName() + " " +
                         inLab.get(i).getLastName() + "\n" +
-                    "Gender: "  +  inLab.get(i).getGender() + "\n" +
-                   "Age: "  +   inLab.get(i).getAge() + "\n" +
-                    "Pregnancy: "  +  inLab.get(i).isPregnant() + "\n" +
-                     "Disease: " +  inLab.get(i).getEnfermedad() + "\n" +
-                     "Importance: " +  inLab.get(i).getImportance() + "\n" +
-                    "Priority: "  +  inLab.get(i).getPriority());
+                        "Gender: " + inLab.get(i).getGender() + "\n" +
+                        "Age: " + inLab.get(i).getAge() + "\n" +
+                        "Pregnancy: " + inLab.get(i).isPregnant() + "\n" +
+                        "Disease: " + inLab.get(i).getEnfermedad() + "\n" +
+                        "Importance: " + inLab.get(i).getImportance() + "\n" +
+                        "Priority: " + inLab.get(i).getPriority());
             }
         } else {
             JOptionPane.showMessageDialog(null, "There are no patients entered yet!");
@@ -410,7 +432,7 @@ public class Main {
 
     }
 
-    public static void checkOrder(){
+    public static void checkOrder() {
 
         if (inLab.size() <= 0) {
             JOptionPane.showMessageDialog(null, "There are no patient entered yet!");
@@ -466,18 +488,18 @@ public class Main {
 
     }
 
-    public static void undo(){
+    public static void undo() {
 
         if (count == 1) {
             patients.delete(code[0].getId());
             inLab.remove(0);
-            if (unit == 1){
+            if (unit == 1) {
                 if (code[0].getPriority() > 0) {
                     queuePriorityH.deletePriority(code[0].getId());
                 } else {
                     queueH.deletePriority(code[0].getId());
                 }
-            }else if(unit == 2){
+            } else if (unit == 2) {
                 if (code[0].getPriority() > 0) {
                     queuePriorityG.deletePriority(code[0].getId());
                 } else {
@@ -495,13 +517,13 @@ public class Main {
                     code[0].getImportance().ordinal() + 1,
                     code[0].getPriority()));
             inLab.add(code[0]);
-            if (unit == 1){
+            if (unit == 1) {
                 if (code[0].getPriority() > 0) {
                     queuePriorityH.HeapInsert(code[0].getId(), code[0].getPriority());
                 } else {
                     queueH.HeapInsert(code[0].getId(), 1);
                 }
-            }else if(unit == 2){
+            } else if (unit == 2) {
                 if (code[0].getPriority() > 0) {
                     queuePriorityG.HeapInsert(code[0].getId(), code[0].getPriority());
                 } else {

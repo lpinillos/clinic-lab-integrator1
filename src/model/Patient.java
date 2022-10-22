@@ -1,4 +1,4 @@
-package ui;
+package model;
 
 public class Patient {
 
@@ -124,3 +124,4 @@ public class Patient {
         return priority + a;
     }
 }
+
