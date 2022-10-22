@@ -10,7 +10,13 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
+/*
+Group members:
+Santiago Jose Belalcazar / A00381777
+Daniel Escobar Vacaflor / A00381157
+Luis Fernando Pinillos / A00381323
 
+ */
 public class Main {
 
     private static final Scanner sc = new Scanner(System.in);
@@ -450,14 +456,14 @@ public class Main {
                             JOptionPane.showMessageDialog(null, "There are no patients entered yet!");
                         } else {
                             String priority = queuePriorityH.print();
-                            JOptionPane.showMessageDialog(null, priority);
+                            JOptionPane.showMessageDialog(null, "The order is:\nPatient's ID: " + priority + "\n");
                         }
                     } else if (uni == 2) {
                         if (queueH.length() <= 0) {
                             JOptionPane.showMessageDialog(null, "There are no patients entered yet!");
                         } else {
                             String normalQueue = queueH.print();
-                            JOptionPane.showMessageDialog(null, normalQueue);
+                            JOptionPane.showMessageDialog(null,"The order is:\nPatient's ID: " +  normalQueue + "\n");
                         }
                     }
                 }

@@ -43,7 +43,7 @@ class HeapTest {
     @Test
     public void insertionOfANewNode3() {
         setupStage2();
-        //Este test tiene la finalidad de verificar que, los paciente se siguen ingresando
+        //Este test tiene la finalidad de verificar que, los pacientes se siguen ingresando
         //a pesar de que ya hay algunos en la lista y, se organiza correctamente, colocando
         //los pacientes de la mayor llave a la menor
         heap.HeapInsert("Persona", 0);
@@ -122,7 +122,7 @@ class HeapTest {
     public void organitationBuildMaxHeapforTheMaximumToBeInTheRoot3() {
         setupStage1();
         //Este test tiene la finalidad de verificar que si se ingresan los pacientes
-        //con llaves en desorden,se organizan correctamente con una prioridad
+        //con llaves en desorden, se organizan correctamente con una prioridad
         //de mayor a menor
         heap.HeapInsert("Luis", 3);
         heap.HeapInsert("Daniel", 1);
@@ -197,6 +197,71 @@ class HeapTest {
         heap.HeapInsert("Persona", 12);
         heap.HeapInsert("Paciente", 1);
         assertEquals("Persona", heap.heapExtracMax());
+    }
+
+    @Test
+    public void deleteTest1(){
+        setupStage2();
+        //Este test se hace con la finalidad de verificar el funcionamiento del delete
+        //siendo que en este caso se evidencia como se borra, correctamente, el elemento
+        //deseado.
+        heap.deletePriority("PTest1");
+        assertEquals("PTest3 PTest2 ",heap.print());
+    }
+
+    @Test
+    public void deleteTest2(){
+        setupStage2();
+        //Este test se hace con la finalidad de ver que si se intenta borrar una persona
+        //que no existe en el programa, el metodo no da un error y simplemente, no borra
+        //ningun dato
+        heap.deletePriority("PersonaInexistente");
+        assertEquals("PTest3 PTest2 PTest1 ",heap.print());
+    }
+
+    @Test
+    public void deleteTest3(){
+        setupStage2();
+        //Este test tiene la finalidad de mostrar que, al eliminar
+        //todos los elementos de la cola, si se busca para eliminar uno nuevo
+        //el metodo no devolvera un NullPointerException
+        heap.deletePriority("PTest3");
+        heap.deletePriority("PTest2");
+        heap.deletePriority("PTest1");
+        heap.deletePriority("Ptest4");
+
+        assertEquals("",heap.print());
+    }
+
+    @Test
+    public void lengthTest1(){
+        setupStage2();
+        //Este test tiene la finalidad de confirmar que el metodo
+        //devuelve el tamaño adecuado de la cola
+        assertEquals(3,heap.length());
+    }
+
+    @Test
+    public void lengthTest2(){
+        setupStage2();
+        //Este test tiene la finalidad de mostrar que cuando se elimina
+        //Un elemento de la cola, el tamaño se actualiza
+        assertEquals(3,heap.length());
+
+        heap.deletePriority("PTest1");
+        assertEquals(2,heap.length());
+    }
+
+    @Test
+    public void lengthTest3(){
+        setupStage2();
+        //Este test tiene la finalidad de mostrar que cuando se añade
+        //Un elemento a la cola, el tamaño se actualiza
+
+        assertEquals(3,heap.length());
+
+        heap.HeapInsert("PTest1",48);
+        assertEquals(4,heap.length());
     }
 
 

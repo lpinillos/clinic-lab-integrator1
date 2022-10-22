@@ -93,18 +93,4 @@ public class ChainHashTable<K, V> implements IHashTable<K, V>{
 
     }
 
-    public void print(){
-        for (int i = 0; i < arr.length; i++) {
-
-            HNode<K,V> temporal = arr[i];
-            System.out.println("ARREGLO EN LA POSICION: "+i);
-            while (temporal!=null) {
-                System.out.println("KEY: "+ temporal.getKey()+" VALUE: "+temporal.getValue());
-                temporal = temporal.getNext();
-            }
-
-        }
-    }
-
-
 }

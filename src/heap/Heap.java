@@ -123,10 +123,9 @@ public class Heap<V> implements IPriorityQueue<V> {
         }
 
     }
-    public void delete(){
-        arr.remove(arr.size() - 1);
-    }
+
     public int length(){
+
         return arr.size();
     }
 
