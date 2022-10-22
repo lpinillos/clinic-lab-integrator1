@@ -48,7 +48,7 @@ public class Patient {
         this.priority = priority;
     }
 
-    public String getId() {
+    public String   getId() {
         return id;
     }
 

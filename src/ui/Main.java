@@ -13,17 +13,22 @@ public class Main {
 
     private static final Scanner sc = new Scanner(System.in);
     private static ChainHashTable<String, Patient> patients;
-    private static Heap<String> queuePriority;
-    private static Heap<String> queue;
+    private static Heap<String> queuePriorityG;
+    private static Heap<String> queueG;
+    private static Heap<String> queuePriorityH;
+    private static Heap<String> queueH;
     private static ArrayList<Patient> inLab;
     private static Patient[] code;
     private static int count = 0;
+    private static int unit = 0;
 
     public static void main(String[] args) {
 
         patients = new ChainHashTable<>();
-        queuePriority = new Heap<>();
-        queue = new Heap<>();
+        queuePriorityG = new Heap<>();
+        queueG = new Heap<>();
+        queuePriorityH = new Heap<>();
+        queueH = new Heap<>();
         inLab = new ArrayList<>();
         code = new Patient[1];
 
@@ -62,153 +67,53 @@ public class Main {
 
 
         while (exit == 0) {
-            int option = Integer.parseInt(JOptionPane.showInputDialog(null,
+            String input = JOptionPane.showInputDialog(null,
                     """
                             |=========================================|
-                            |1. Ingresar paciente                                                        |                                    |
-                            |2. Atender cola de prioridad                                          |
-                            |3. Atender cola                                                                |
-                            |4. Personas en el laboratorio                                        |
-                            |5. Orden de atención                                                      |
-                            |6. Deshacer salida o entrada de paciente                   |
-                            |7. Acabar programa                                                        |
-                            |=========================================|"""));
+                            |1. Ingresar paciente                     |
+                            |2. Atender paciente Hematologia          |
+                            |3. Atender paciente Cola General         |
+                            |4. Personas en el laboratorio            |
+                            |5. Orden de atención                     |
+                            |6. Deshacer salida o entrada de paciente |
+                            |7. Acabar programa                       |
+                            |=========================================|""");
 
-            if (String.valueOf(option).equals("")) {
-                JOptionPane.showMessageDialog(null, "Please enter an option!");
+            if(input.isEmpty()){
+                continue;
             }
+
+            int option = Integer.parseInt(input);
 
             switch (option) {
                 case 1:
 
-                    IngresoPaciente();
+                    insertPatient();
                     break;
-
                 case 2:
-                    if (queuePriority.length() <= 0) {
-                        JOptionPane.showMessageDialog(null, "No se han ingresado pacientes");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Pasar al paciente: " + "\n" +
-                                patients.search(queuePriority.heapMaximum()).getId() + "\n" +
-                                patients.search(queuePriority.heapMaximum()).getName() + "\n" +
-                                patients.search(queuePriority.heapMaximum()).getLastName());
 
-                        JOptionPane.showMessageDialog(null, "Salida del paciente:" + "\n" +
-                                patients.search(queuePriority.heapMaximum()).getId() + "\n" +
-                                patients.search(queuePriority.heapMaximum()).getName() + "\n" +
-                                patients.search(queuePriority.heapMaximum()).getLastName());
-
-                        for (int i = 0; i < inLab.size(); i++) {
-                            if (inLab.get(i).getId().equals(patients.search(queue.heapMaximum()).getId())) {
-                                inLab.remove(i);
-                                break;
-
-                            }
-                        }
-                        code[0] = patients.search(queue.heapMaximum());
-                        queuePriority.heapExtracMax();
-                        count = 2;
-                    }
-
+                    attendH();
                     break;
                 case 3:
-                    if (queue.length() <= 0) {
-                        JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Pasar el paciente:" + "\n" +
-                                patients.search(queue.heapMaximum()).getId() + "\n" +
-                                patients.search(queue.heapMaximum()).getName() + "\n" +
-                                patients.search(queue.heapMaximum()).getLastName());
 
-                        JOptionPane.showMessageDialog(null, "Salida del paciente:" + "\n" +
-                                patients.search(queue.heapMaximum()).getId() + "\n" +
-                                patients.search(queue.heapMaximum()).getName() + "\n" +
-                                patients.search(queue.heapMaximum()).getLastName());
-
-                        for (int i = 0; i < inLab.size(); i++) {
-                            if (inLab.get(i).getId().equals(patients.search(queue.heapMaximum()).getId())) {
-                                inLab.remove(i);
-                                break;
-                            }
-                        }
-
-                        code[0] = patients.search(queue.heapMaximum());
-                        queue.heapExtracMax();
-                        count = 2;
-                    }
-
+                    attendG();
                     break;
                 case 4:
 
-                    if (inLab.size() > 0) {
-                        for (int i = 0; i < inLab.size(); i++) {
-                            System.out.println(inLab.get(i).getId() + "|" +
-                                    inLab.get(i).getName() + "|" +
-                                    inLab.get(i).getLastName() + "|" +
-                                    inLab.get(i).getGender() + "|" +
-                                    inLab.get(i).getAge() + "|" +
-                                    inLab.get(i).isPregnant() + "|" +
-                                    inLab.get(i).getEnfermedad() + "|" +
-                                    inLab.get(i).getImportance() + "|" +
-                                    inLab.get(i).getPriority());
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(null, "No han ingresado pacientes");
-                    }
-
+                    patientsInLab();
                     break;
                 case 5:
-                    //REVISAR EL PRINT
-                    JOptionPane.showMessageDialog(null, queue.print());
-                    if (queuePriority.length() <= 0 || queue.length() <= 0) {
-                        JOptionPane.showMessageDialog(null, "There are no pacients entered yet");
-                    } else {
-                        int uni = Integer.parseInt(JOptionPane.showInputDialog(null, "Que unidad desea consultar?" +
-                                "\nIngrese 1 -> Prioridad o 2 -> Normal"));
-                        if (uni == 1) {
-                            String priority = queuePriority.print();
-                            JOptionPane.showMessageDialog(null, priority);
-                        } else if (uni == 2) {
-                            queue.print();
-                        }
-                    }
 
+                    checkOrder();
                     break;
                 case 6:
-                    //DESHACER
-                    if (count == 1) {
-                        patients.delete(code[0].getId());
-                        inLab.remove(0);
-                        if (code[0].getPriority() > 0) {
 
-                        } else {
-
-                        }
-                    } else if (count == 2) {
-                        patients.insert(code[0].getId(), new Patient(code[0].getId(),
-                                code[0].getName(),
-                                code[0].getLastName(),
-                                code[0].getGender(),
-                                code[0].getAge(),
-                                code[0].isPregnant(),
-                                code[0].getEnfermedad(),
-                                code[0].getImportance().ordinal() + 1,
-                                code[0].getPriority()));
-                        inLab.add(code[0]);
-                        if (code[0].getPriority() > 0) {
-                            queuePriority.HeapInsert(code[0].getId(), code[0].getPriority());
-                        } else {
-                            queue.HeapInsert(code[0].getId(), 1);
-                        }
-                    } else if (count == 0) {
-                        JOptionPane.showMessageDialog(null, "No ha ingresado ni salido ningun paciente");
-                    }
-
+                    undo();
                     break;
                 case 7:
                     JOptionPane.showMessageDialog(null, "Gracias por usar el programa!\n");
                     exit++;
-
+                    break;
                 default:
                     JOptionPane.showMessageDialog(null, "Please enter a valid option!");
             }
@@ -216,19 +121,38 @@ public class Main {
     }
 
 
-    public static void IngresoPaciente() {
+    public static void insertPatient() {
 
         String id = JOptionPane.showInputDialog("Ingrese la cedula del paciente");
 
         if (patients.search(id) != null && patients.search(id).getId().equals(id)) {
+
+            int importance = 0;
+
+            if(patients.search(id).getImportance().equals(situationImportance.NONE)){
+                importance=1;
+            }else if(patients.search(id).getImportance().equals(situationImportance.LOW)){
+                importance=2;
+            }else if(patients.search(id).getImportance().equals(situationImportance.MODERATE)){
+                importance=3;
+            }else if(patients.search(id).getImportance().equals(situationImportance.INTERMEDIATE)){
+                importance=4;
+            }else if(patients.search(id).getImportance().equals(situationImportance.SERIOUS)){
+                importance=5;
+            }else if(patients.search(id).getImportance().equals(situationImportance.GRAVE)){
+                importance=6;
+            }else if(patients.search(id).getImportance().equals(situationImportance.CRITICAL)){
+                importance=7;
+            }
+
             JOptionPane.showMessageDialog(null, "Nombre: " + patients.search(id).getName() + " " + patients.search(id).getLastName() + "\n" +
                     "Edad: " + patients.search(id).getAge() + "\n" +
                     "Id: " + patients.search(id).getId() + "\n" +
                     "Genero: " + patients.search(id).getGender() + "\n" +
                     "Embarazo: " + patients.search(id).isPregnant() + "\n" +
                     "Enfermedad: " + patients.search(id).getEnfermedad() + "\n" +
-                    "Prioridad?: " + patients.search(id).getPriority() + "\n" +
-                    "Importancia: " + patients.search(id).getImportance());
+                    "Importancia: " + patients.search(id).getImportance() + "\n" +
+                    "Prioridad?: " + patients.search(id).getPriority());
 
             inLab.add(new Patient(patients.search(id).getId(),
                     patients.search(id).getName(),
@@ -237,7 +161,7 @@ public class Main {
                     patients.search(id).getAge(),
                     patients.search(id).isPregnant(),
                     patients.search(id).getEnfermedad(),
-                    patients.search(id).getImportance().ordinal() + 1,
+                    importance,
                     patients.search(id).getPriority()));
         } else {
 
@@ -272,10 +196,23 @@ public class Main {
 
         }
 
-        if (patients.search(id).getPriority() > 0) { //map
-            queuePriority.HeapInsert(id, patients.search(id).getPriority());
-        } else {
-            queue.HeapInsert(id, 1);
+        int unity = Integer.parseInt(JOptionPane.showInputDialog("Ingrese unidad a la que se dirige el paciente" +
+                "\nDigite 1 -> Hematologia, 2 -> Proposito General"));
+
+        if(unity==1){
+            unit = 1;
+            if (patients.search(id).getPriority() > 0) { //map
+                queuePriorityH.HeapInsert(id, patients.search(id).getPriority());
+            } else {
+                queueH.HeapInsert(id, 1);
+            }
+        }else if(unity==2){
+            unit = 2;
+            if (patients.search(id).getPriority() > 0) { //map
+                queuePriorityG.HeapInsert(id, patients.search(id).getPriority());
+            } else {
+                queueG.HeapInsert(id, 1);
+            }
         }
 
     }
@@ -312,7 +249,261 @@ public class Main {
 
     }
 
+    public static void attendH(){
+
+        if (queueG.length() <= 0 && queuePriorityG.length() <= 0) {
+            JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+        }else {
+            int queues = Integer.parseInt(JOptionPane.showInputDialog("Que cola se desea atender?" + "\n" +
+                    "Ingrese 1 -> Cola de prioridad, 2 -> Cola General"));
+
+            if (queues == 1) {
+                if(queuePriorityG.length() <= 0){
+                    JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                }else {
+                    JOptionPane.showMessageDialog(null, "Pasar al paciente: " + "\n" +
+                            patients.search(queuePriorityH.heapMaximum()).getId() + "\n" +
+                            patients.search(queuePriorityH.heapMaximum()).getName() + "\n" +
+                            patients.search(queuePriorityH.heapMaximum()).getLastName());
+
+                    JOptionPane.showMessageDialog(null, "Salida del paciente:" + "\n" +
+                            patients.search(queuePriorityH.heapMaximum()).getId() + "\n" +
+                            patients.search(queuePriorityH.heapMaximum()).getName() + "\n" +
+                            patients.search(queuePriorityH.heapMaximum()).getLastName());
+
+                    for (int i = 0; i < inLab.size(); i++) {
+                        if (inLab.get(i).getId().equals(patients.search(queuePriorityH.heapMaximum()).getId())) {
+                            inLab.remove(i);
+                            break;
+
+                        }
+                    }
+                    code[0] = patients.search(queuePriorityH.heapMaximum());
+                    queuePriorityH.heapExtracMax();
+                    count = 2;
+                }
+            } else if (queues == 2) {
+                if (queueG.length() <= 0) {
+                    JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Pasar el paciente:" + "\n" +
+                            patients.search(queueH.heapMaximum()).getId() + "\n" +
+                            patients.search(queueH.heapMaximum()).getName() + "\n" +
+                            patients.search(queueH.heapMaximum()).getLastName());
+
+                    JOptionPane.showMessageDialog(null, "Salida del paciente:" + "\n" +
+                            patients.search(queueH.heapMaximum()).getId() + "\n" +
+                            patients.search(queueH.heapMaximum()).getName() + "\n" +
+                            patients.search(queueH.heapMaximum()).getLastName());
+
+                    for (int i = 0; i < inLab.size(); i++) {
+                        if (inLab.get(i).getId().equals(patients.search(queueH.heapMaximum()).getId())) {
+                            inLab.remove(i);
+                            break;
+                        }
+                    }
+
+                    code[0] = patients.search(queueH.heapMaximum());
+                    queueH.heapExtracMax();
+                    count = 2;
+                }
+            }
+
+            unit = 1;
+        }
+
+    }
+
+    public static void attendG(){
+
+        if (queueG.length() <= 0 && queuePriorityG.length() <= 0) {
+            JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+        }else {
+            int queues2 = Integer.parseInt(JOptionPane.showInputDialog("Que cola se desea atender?" + "\n" +
+                    "Ingrese 1 -> Cola de prioridad, 2 -> Cola General"));
+            if (queues2 == 1) {
+                if(queuePriorityG.length() <= 0){
+                    JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                }else {
+                    JOptionPane.showMessageDialog(null, "Pasar al paciente: " + "\n" +
+                            patients.search(queuePriorityG.heapMaximum()).getId() + "\n" +
+                            patients.search(queuePriorityG.heapMaximum()).getName() + "\n" +
+                            patients.search(queuePriorityG.heapMaximum()).getLastName());
+
+                    JOptionPane.showMessageDialog(null, "Salida del paciente:" + "\n" +
+                            patients.search(queuePriorityG.heapMaximum()).getId() + "\n" +
+                            patients.search(queuePriorityG.heapMaximum()).getName() + "\n" +
+                            patients.search(queuePriorityG.heapMaximum()).getLastName());
+
+                    for (int i = 0; i < inLab.size(); i++) {
+                        if (inLab.get(i).getId().equals(patients.search(queuePriorityG.heapMaximum()).getId())) {
+                            inLab.remove(i);
+                            break;
+
+                        }
+                    }
+                    code[0] = patients.search(queuePriorityG.heapMaximum());
+                    queuePriorityG.heapExtracMax();
+                    count = 2;
+                }
+            } else if (queues2 == 2) {
+                if (queueG.length() <= 0) {
+                    JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Pasar el paciente:" + "\n" +
+                            patients.search(queueG.heapMaximum()).getId() + "\n" +
+                            patients.search(queueG.heapMaximum()).getName() + "\n" +
+                            patients.search(queueG.heapMaximum()).getLastName());
+
+                    JOptionPane.showMessageDialog(null, "Salida del paciente:" + "\n" +
+                            patients.search(queueG.heapMaximum()).getId() + "\n" +
+                            patients.search(queueG.heapMaximum()).getName() + "\n" +
+                            patients.search(queueG.heapMaximum()).getLastName());
+
+                    for (int i = 0; i < inLab.size(); i++) {
+                        if (inLab.get(i).getId().equals(patients.search(queueG.heapMaximum()).getId())) {
+                            inLab.remove(i);
+                            break;
+                        }
+                    }
+
+                    code[0] = patients.search(queueG.heapMaximum());
+                    queueG.heapExtracMax();
+                    count = 2;
+                }
+            }
+
+            unit = 2;
+        }
+
+    }
+
+    public static void patientsInLab(){
+
+        if (inLab.size() > 0) {
+            for (int i = 0; i < inLab.size(); i++) {
+                System.out.println(inLab.get(i).getId() + "|" +
+                        inLab.get(i).getName() + "|" +
+                        inLab.get(i).getLastName() + "|" +
+                        inLab.get(i).getGender() + "|" +
+                        inLab.get(i).getAge() + "|" +
+                        inLab.get(i).isPregnant() + "|" +
+                        inLab.get(i).getEnfermedad() + "|" +
+                        inLab.get(i).getImportance() + "|" +
+                        inLab.get(i).getPriority());
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No han ingresado pacientes");
+        }
+
+    }
+
+    public static void checkOrder(){
+
+        if (inLab.size() <= 0) {
+            JOptionPane.showMessageDialog(null, "No han ingresado pacientes");
+        } else {
+            int unit = Integer.parseInt(JOptionPane.showInputDialog("Que unidad se desea revisar" + "\n" +
+                    "Ingrese 1 -> Hemotologia, 2 -> Atencion General"));
+            if (unit == 1) {
+                if (queuePriorityH.length() <= 0 && queueH.length() <= 0) {
+                    JOptionPane.showMessageDialog(null, "There are no pacients entered yet");
+                } else {
+                    int uni = Integer.parseInt(JOptionPane.showInputDialog(null, "Que unidad desea consultar?" +
+                            "\nIngrese 1 -> Prioridad o 2 -> Normal"));
+                    if (uni == 1) {
+                        if (queuePriorityH.length() <= 0) {
+                            JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                        } else {
+                            String priority = queuePriorityH.print();
+                            JOptionPane.showMessageDialog(null, priority);
+                        }
+                    } else if (uni == 2) {
+                        if (queueH.length() <= 0) {
+                            JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                        } else {
+                            String normalQueue = queueH.print();
+                            JOptionPane.showMessageDialog(null, normalQueue);
+                        }
+                    }
+                }
+            } else if (unit == 2) {
+                if (queuePriorityG.length() <= 0 && queueG.length() <= 0) {
+                    JOptionPane.showMessageDialog(null, "There are no pacients entered yet");
+                } else {
+                    int uni = Integer.parseInt(JOptionPane.showInputDialog(null, "Que unidad desea consultar?" +
+                            "\nIngrese 1 -> Prioridad o 2 -> Normal"));
+                    if (uni == 1) {
+                        if (queuePriorityG.length() <= 0) {
+                            JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                        } else {
+                            String priority = queuePriorityG.print();
+                            JOptionPane.showMessageDialog(null, priority);
+                        }
+                    } else if (uni == 2) {
+                        if (queueG.length() <= 0) {
+                            JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                        } else {
+                            String normalQueue = queueG.print();
+                            JOptionPane.showMessageDialog(null, normalQueue);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    public static void undo(){
+
+        if (count == 1) {
+            patients.delete(code[0].getId());
+            inLab.remove(0);
+            if (unit == 1){
+                if (code[0].getPriority() > 0) {
+                    queuePriorityH.deletePriority(code[0].getId());
+                } else {
+                    queueH.deletePriority(code[0].getId());
+                }
+            }else if(unit == 2){
+                if (code[0].getPriority() > 0) {
+                    queuePriorityG.deletePriority(code[0].getId());
+                } else {
+                    queueG.deletePriority(code[0].getId());
+                }
+            }
+        } else if (count == 2) {
+            patients.insert(code[0].getId(), new Patient(code[0].getId(),
+                    code[0].getName(),
+                    code[0].getLastName(),
+                    code[0].getGender(),
+                    code[0].getAge(),
+                    code[0].isPregnant(),
+                    code[0].getEnfermedad(),
+                    code[0].getImportance().ordinal() + 1,
+                    code[0].getPriority()));
+            inLab.add(code[0]);
+            if (unit == 1){
+                if (code[0].getPriority() > 0) {
+                    queuePriorityH.HeapInsert(code[0].getId(), code[0].getPriority());
+                } else {
+                    queueH.HeapInsert(code[0].getId(), 1);
+                }
+            }else if(unit == 2){
+                if (code[0].getPriority() > 0) {
+                    queuePriorityG.HeapInsert(code[0].getId(), code[0].getPriority());
+                } else {
+                    queueG.HeapInsert(code[0].getId(), 1);
+                }
+            }
+        } else if (count == 0) {
+            JOptionPane.showMessageDialog(null, "No ha ingresado ni salido ningun paciente");
+        }
+
+    }
+
     public static void loadMemory() throws IOException {
+
         FileInputStream fis = new FileInputStream("program.json");
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(fis)
@@ -329,5 +520,6 @@ public class Main {
         for (Patient datum : data) {
             patients.insert(datum.getId(), datum);
         }
+
     }
 }

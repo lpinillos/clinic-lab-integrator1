@@ -26,4 +26,16 @@ public class HeapNode <V> {
     public void setValue(V value) {
         this.value = value;
     }
+
+    public int compare(int o){
+
+        if(o == this.getKey()){
+            return 0;
+        }else if(0> this.getKey()){
+            return 1;
+        }else{
+            return -1;
+        }
+
+    }
 }

@@ -1,8 +1,5 @@
 package heap;
 
-import hashtables.HNode;
-
-import javax.swing.*;
 import java.util.ArrayList;
 
 public class Heap<V> implements IPriorityQueue<V> {
@@ -107,22 +104,6 @@ public class Heap<V> implements IPriorityQueue<V> {
         return arr.get(0).getValue();
     }
 
-    public void delete(int goal){
-        int inicio = 0;
-        int fin = arr.size() - 1;
-        while (inicio <= fin) {
-            int mid = (inicio + fin) / 2;
-            if (goal > arr.get(mid).getKey()) {
-                inicio = mid + 1;
-            } else if (goal < arr.get(mid).getKey()) {
-                fin = mid - 1;
-            } else {
-                System.out.println("Valor buscado: " + arr.get(mid) + " en posición " + mid);
-                return;
-            }
-        }
-    }
-
     public String print(){
         String msg = "";
         for (int i = 0; i < arr.size(); i++) {
@@ -130,7 +111,18 @@ public class Heap<V> implements IPriorityQueue<V> {
         }
         return msg;
     }
+    public void deletePriority(V id){
 
+        boolean out = false;
+
+        for (int i = 0; i < arr.size() && !out; i++) {
+            if(arr.get(i).getValue() == id){
+                arr.remove(i);
+                out = true;
+            }
+        }
+
+    }
     public void delete(){
         arr.remove(arr.size() - 1);
     }
