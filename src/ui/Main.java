@@ -33,7 +33,7 @@ public class Main {
         code = new Patient[1];
 
         int exit = 0;
-        JOptionPane.showMessageDialog(null, "Inicializando programa");
+        JOptionPane.showMessageDialog(null, "Starting program");
 
         /*
         try {
@@ -70,13 +70,13 @@ public class Main {
             String input = JOptionPane.showInputDialog(null,
                     """
                             |=========================================|
-                            |1. Ingresar paciente                     |
-                            |2. Atender paciente Hematologia          |
-                            |3. Atender paciente Cola General         |
-                            |4. Personas en el laboratorio            |
-                            |5. Orden de atención                     |
-                            |6. Deshacer salida o entrada de paciente |
-                            |7. Acabar programa                       |
+                            |1. Enter patient
+                            |2. Attend hematology patient
+                            |3. Attend general queue patient
+                            |4. Pacients at the lab
+                            |5. Attention order
+                            |6. Undo entry or exit of pacients
+                            |7. End program
                             |=========================================|""");
 
             if(input.isEmpty()){
@@ -111,7 +111,7 @@ public class Main {
                     undo();
                     break;
                 case 7:
-                    JOptionPane.showMessageDialog(null, "Gracias por usar el programa!\n");
+                    JOptionPane.showMessageDialog(null, "Thanks for using the program!\n");
                     exit++;
                     break;
                 default:
@@ -123,7 +123,11 @@ public class Main {
 
     public static void insertPatient() {
 
-        String id = JOptionPane.showInputDialog("Ingrese la cedula del paciente");
+        String id = JOptionPane.showInputDialog("Enter pacient id");
+
+        while(id.isEmpty()){
+            id = JOptionPane.showInputDialog("Enter pacient id");
+        }
 
         if (patients.search(id) != null && patients.search(id).getId().equals(id)) {
 
@@ -145,14 +149,14 @@ public class Main {
                 importance=7;
             }
 
-            JOptionPane.showMessageDialog(null, "Nombre: " + patients.search(id).getName() + " " + patients.search(id).getLastName() + "\n" +
-                    "Edad: " + patients.search(id).getAge() + "\n" +
+            JOptionPane.showMessageDialog(null, "Name: " + patients.search(id).getName() + " " + patients.search(id).getLastName() + "\n" +
+                    "Age: " + patients.search(id).getAge() + "\n" +
                     "Id: " + patients.search(id).getId() + "\n" +
-                    "Genero: " + patients.search(id).getGender() + "\n" +
-                    "Embarazo: " + patients.search(id).isPregnant() + "\n" +
-                    "Enfermedad: " + patients.search(id).getEnfermedad() + "\n" +
-                    "Importancia: " + patients.search(id).getImportance() + "\n" +
-                    "Prioridad?: " + patients.search(id).getPriority());
+                    "Gender: " + patients.search(id).getGender() + "\n" +
+                    "Pregnant: " + patients.search(id).isPregnant() + "\n" +
+                    "Disease: " + patients.search(id).getEnfermedad() + "\n" +
+                    "Importance: " + patients.search(id).getImportance() + "\n" +
+                    "Priority: " + patients.search(id).getPriority());
 
             inLab.add(new Patient(patients.search(id).getId(),
                     patients.search(id).getName(),
@@ -165,23 +169,23 @@ public class Main {
                     patients.search(id).getPriority()));
         } else {
 
-            JOptionPane.showMessageDialog(null, "El paciente no esta ingresado!");
+            JOptionPane.showMessageDialog(null, "The patient is not entered yet");
 
-            String name = JOptionPane.showInputDialog("Ingrese el nombre del paciente");
+            String name = JOptionPane.showInputDialog("Enter the name of the patient");
 
-            String lastName = JOptionPane.showInputDialog("Ingrese el apellido del paciente");
+            String lastName = JOptionPane.showInputDialog("Enter the last name of the patient");
 
-            String gender = JOptionPane.showInputDialog("Ingrese el genero del paciente");
+            String gender = JOptionPane.showInputDialog("Enter the patient's gender");
 
-            int age = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la edad del paciente"));
+            int age = Integer.parseInt(JOptionPane.showInputDialog("Enter the age of the patient"));
 
-            boolean pregnancy = Boolean.parseBoolean(JOptionPane.showInputDialog("El paciente se encuentra embarazado?"));
+            boolean pregnancy = Boolean.parseBoolean(JOptionPane.showInputDialog("Is the patient pregnant?"));
 
-            String ill = JOptionPane.showInputDialog("Ingrese la enfermedad que tenga el paciente" +
-                    "\ncoloque *ninguna* si el paciente no tiene enfermedad alguna ");
+            String ill = JOptionPane.showInputDialog("Enter the disease of the patient" +
+                    "\nenter *none* if the patient have no disease");
 
-            int importance = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la gravedad de la situacion actual del paciente" +
-                    "\nDigite 1 -> NONE, 2 -> LOW, 3 -> MODERATE, 4 -> INTERMEDIATE, 5 -> SERIOUS, 6 -> GRAVE, 7 -> CRITICAL"));
+            int importance = Integer.parseInt(JOptionPane.showInputDialog("Enter the severity of the patient's condition" +
+                    "\nEnter 1 -> NONE, 2 -> LOW, 3 -> MODERATE, 4 -> INTERMEDIATE, 5 -> SERIOUS, 6 -> GRAVE, 7 -> CRITICAL"));
 
             patients.insert(id, new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, 0));
 
@@ -192,12 +196,12 @@ public class Main {
             inLab.add(new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, patients.search(id).getPriority()));
             code[0] = new Patient(id, name, lastName, gender, age, pregnancy, ill, importance, patients.search(id).getPriority());
 
-            JOptionPane.showMessageDialog(null, "Paciente agregado con exito!");
+            JOptionPane.showMessageDialog(null, "Patient added successfully!");
 
         }
 
-        int unity = Integer.parseInt(JOptionPane.showInputDialog("Ingrese unidad a la que se dirige el paciente" +
-                "\nDigite 1 -> Hematologia, 2 -> Proposito General"));
+        int unity = Integer.parseInt(JOptionPane.showInputDialog("Enter the unit to which the patient goes" +
+                "\nEnter 1 -> Hematology, 2 -> General propose"));
 
         if(unity==1){
             unit = 1;
@@ -252,23 +256,25 @@ public class Main {
     public static void attendH(){
 
         if (queueG.length() <= 0 && queuePriorityG.length() <= 0) {
-            JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+            JOptionPane.showMessageDialog(null, "There is no patient entered yet!");
         }else {
-            int queues = Integer.parseInt(JOptionPane.showInputDialog("Que cola se desea atender?" + "\n" +
-                    "Ingrese 1 -> Cola de prioridad, 2 -> Cola General"));
+            int queues = Integer.parseInt(JOptionPane.showInputDialog("Which queue do you want to attend?" + "\n" +
+                    "Enter 1 -> priority queue, 2 -> General queue"));
 
             if (queues == 1) {
                 if(queuePriorityG.length() <= 0){
-                    JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                    JOptionPane.showMessageDialog(null, "There is no patient entered yet!");
                 }else {
-                    JOptionPane.showMessageDialog(null, "Pasar al paciente: " + "\n" +
-                            patients.search(queuePriorityH.heapMaximum()).getId() + "\n" +
-                            patients.search(queuePriorityH.heapMaximum()).getName() + "\n" +
+                    JOptionPane.showMessageDialog(null, "Patient checkIn: " + "\n" +
+                         "ID: "  + patients.search(queuePriorityH.heapMaximum()).getId() + "\n" +
+                        "Name: " +   patients.search(queuePriorityH.heapMaximum()).getName() + " " +
                             patients.search(queuePriorityH.heapMaximum()).getLastName());
 
-                    JOptionPane.showMessageDialog(null, "Salida del paciente:" + "\n" +
-                            patients.search(queuePriorityH.heapMaximum()).getId() + "\n" +
-                            patients.search(queuePriorityH.heapMaximum()).getName() + "\n" +
+                    JOptionPane.showMessageDialog(null, "The patient is now in query");
+
+                    JOptionPane.showMessageDialog(null, "Patient checkout:" + "\n" +
+                        "ID: "  +  patients.search(queuePriorityH.heapMaximum()).getId() + "\n" +
+                         "Name: " +  patients.search(queuePriorityH.heapMaximum()).getName() + " " +
                             patients.search(queuePriorityH.heapMaximum()).getLastName());
 
                     for (int i = 0; i < inLab.size(); i++) {
@@ -284,16 +290,18 @@ public class Main {
                 }
             } else if (queues == 2) {
                 if (queueG.length() <= 0) {
-                    JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                    JOptionPane.showMessageDialog(null, "There is no patient entered yet!");
                 } else {
-                    JOptionPane.showMessageDialog(null, "Pasar el paciente:" + "\n" +
-                            patients.search(queueH.heapMaximum()).getId() + "\n" +
-                            patients.search(queueH.heapMaximum()).getName() + "\n" +
+                    JOptionPane.showMessageDialog(null, "Patient checkIn:" + "\n" +
+                          "ID: " +  patients.search(queueH.heapMaximum()).getId() + "\n" +
+                         "Name: " +   patients.search(queueH.heapMaximum()).getName() + " " +
                             patients.search(queueH.heapMaximum()).getLastName());
 
-                    JOptionPane.showMessageDialog(null, "Salida del paciente:" + "\n" +
-                            patients.search(queueH.heapMaximum()).getId() + "\n" +
-                            patients.search(queueH.heapMaximum()).getName() + "\n" +
+                    JOptionPane.showMessageDialog(null, "The patient is now in query");
+
+                    JOptionPane.showMessageDialog(null, "Patient checkout:" + "\n" +
+                         "ID: " +   patients.search(queueH.heapMaximum()).getId() + "\n" +
+                         "Name: " +   patients.search(queueH.heapMaximum()).getName() + " " +
                             patients.search(queueH.heapMaximum()).getLastName());
 
                     for (int i = 0; i < inLab.size(); i++) {
@@ -317,22 +325,24 @@ public class Main {
     public static void attendG(){
 
         if (queueG.length() <= 0 && queuePriorityG.length() <= 0) {
-            JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+            JOptionPane.showMessageDialog(null, "There is no patient entered yet!");
         }else {
-            int queues2 = Integer.parseInt(JOptionPane.showInputDialog("Que cola se desea atender?" + "\n" +
-                    "Ingrese 1 -> Cola de prioridad, 2 -> Cola General"));
+            int queues2 = Integer.parseInt(JOptionPane.showInputDialog("Which queue do you want to attend?" + "\n" +
+                    "Enter 1 -> Priority queue, 2 -> General queue"));
             if (queues2 == 1) {
                 if(queuePriorityG.length() <= 0){
-                    JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                    JOptionPane.showMessageDialog(null, "There is no patient entered yet!");
                 }else {
-                    JOptionPane.showMessageDialog(null, "Pasar al paciente: " + "\n" +
-                            patients.search(queuePriorityG.heapMaximum()).getId() + "\n" +
-                            patients.search(queuePriorityG.heapMaximum()).getName() + "\n" +
+                    JOptionPane.showMessageDialog(null, "Patient checkIn " + "\n" +
+                          "ID: " + patients.search(queuePriorityG.heapMaximum()).getId() + "\n" +
+                        "Name: " +   patients.search(queuePriorityG.heapMaximum()).getName() + " " +
                             patients.search(queuePriorityG.heapMaximum()).getLastName());
 
-                    JOptionPane.showMessageDialog(null, "Salida del paciente:" + "\n" +
-                            patients.search(queuePriorityG.heapMaximum()).getId() + "\n" +
-                            patients.search(queuePriorityG.heapMaximum()).getName() + "\n" +
+                    JOptionPane.showMessageDialog(null, "The patient is now in query");
+
+                    JOptionPane.showMessageDialog(null, "Patient checkout:" + "\n" +
+                         "ID: " +  patients.search(queuePriorityG.heapMaximum()).getId() + "\n" +
+                        "Name: " +   patients.search(queuePriorityG.heapMaximum()).getName() + " " +
                             patients.search(queuePriorityG.heapMaximum()).getLastName());
 
                     for (int i = 0; i < inLab.size(); i++) {
@@ -348,16 +358,18 @@ public class Main {
                 }
             } else if (queues2 == 2) {
                 if (queueG.length() <= 0) {
-                    JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                    JOptionPane.showMessageDialog(null, "There is no patient entered yet!");
                 } else {
-                    JOptionPane.showMessageDialog(null, "Pasar el paciente:" + "\n" +
-                            patients.search(queueG.heapMaximum()).getId() + "\n" +
-                            patients.search(queueG.heapMaximum()).getName() + "\n" +
+                    JOptionPane.showMessageDialog(null, "Patient checkIn:" + "\n" +
+                          "ID: " + patients.search(queueG.heapMaximum()).getId() + "\n" +
+                          "Name: " +  patients.search(queueG.heapMaximum()).getName() + " " +
                             patients.search(queueG.heapMaximum()).getLastName());
 
-                    JOptionPane.showMessageDialog(null, "Salida del paciente:" + "\n" +
-                            patients.search(queueG.heapMaximum()).getId() + "\n" +
-                            patients.search(queueG.heapMaximum()).getName() + "\n" +
+                    JOptionPane.showMessageDialog(null, "The patient is now in query");
+
+                    JOptionPane.showMessageDialog(null, "Patient checkout:" + "\n" +
+                        "ID: " +   patients.search(queueG.heapMaximum()).getId() + "\n" +
+                         "Name: " +  patients.search(queueG.heapMaximum()).getName() + " " +
                             patients.search(queueG.heapMaximum()).getLastName());
 
                     for (int i = 0; i < inLab.size(); i++) {
@@ -382,18 +394,18 @@ public class Main {
 
         if (inLab.size() > 0) {
             for (int i = 0; i < inLab.size(); i++) {
-                System.out.println(inLab.get(i).getId() + "|" +
-                        inLab.get(i).getName() + "|" +
-                        inLab.get(i).getLastName() + "|" +
-                        inLab.get(i).getGender() + "|" +
-                        inLab.get(i).getAge() + "|" +
-                        inLab.get(i).isPregnant() + "|" +
-                        inLab.get(i).getEnfermedad() + "|" +
-                        inLab.get(i).getImportance() + "|" +
-                        inLab.get(i).getPriority());
+                JOptionPane.showMessageDialog(null,"ID: " + inLab.get(i).getId() + "\n" +
+                   "Name: "  +   inLab.get(i).getName() + " " +
+                        inLab.get(i).getLastName() + "\n" +
+                    "Gender: "  +  inLab.get(i).getGender() + "\n" +
+                   "Age: "  +   inLab.get(i).getAge() + "\n" +
+                    "Pregnancy: "  +  inLab.get(i).isPregnant() + "\n" +
+                     "Disease: " +  inLab.get(i).getEnfermedad() + "\n" +
+                     "Importance: " +  inLab.get(i).getImportance() + "\n" +
+                    "Priority: "  +  inLab.get(i).getPriority());
             }
         } else {
-            JOptionPane.showMessageDialog(null, "No han ingresado pacientes");
+            JOptionPane.showMessageDialog(null, "There are no patients entered yet!");
         }
 
     }
@@ -401,26 +413,26 @@ public class Main {
     public static void checkOrder(){
 
         if (inLab.size() <= 0) {
-            JOptionPane.showMessageDialog(null, "No han ingresado pacientes");
+            JOptionPane.showMessageDialog(null, "There are no patient entered yet!");
         } else {
-            int unit = Integer.parseInt(JOptionPane.showInputDialog("Que unidad se desea revisar" + "\n" +
-                    "Ingrese 1 -> Hemotologia, 2 -> Atencion General"));
+            int unit = Integer.parseInt(JOptionPane.showInputDialog("Which unit do you want to check?" + "\n" +
+                    "Enter 1 -> Hematology, 2 -> General attention"));
             if (unit == 1) {
                 if (queuePriorityH.length() <= 0 && queueH.length() <= 0) {
                     JOptionPane.showMessageDialog(null, "There are no pacients entered yet");
                 } else {
-                    int uni = Integer.parseInt(JOptionPane.showInputDialog(null, "Que unidad desea consultar?" +
-                            "\nIngrese 1 -> Prioridad o 2 -> Normal"));
+                    int uni = Integer.parseInt(JOptionPane.showInputDialog(null, "Which unit do you want to check?" +
+                            "\nEnter 1 -> Priority o 2 -> Normal"));
                     if (uni == 1) {
                         if (queuePriorityH.length() <= 0) {
-                            JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                            JOptionPane.showMessageDialog(null, "There are no patients entered yet!");
                         } else {
                             String priority = queuePriorityH.print();
                             JOptionPane.showMessageDialog(null, priority);
                         }
                     } else if (uni == 2) {
                         if (queueH.length() <= 0) {
-                            JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                            JOptionPane.showMessageDialog(null, "There are no patients entered yet!");
                         } else {
                             String normalQueue = queueH.print();
                             JOptionPane.showMessageDialog(null, normalQueue);
@@ -429,20 +441,20 @@ public class Main {
                 }
             } else if (unit == 2) {
                 if (queuePriorityG.length() <= 0 && queueG.length() <= 0) {
-                    JOptionPane.showMessageDialog(null, "There are no pacients entered yet");
+                    JOptionPane.showMessageDialog(null, "There are no patients entered yet!");
                 } else {
-                    int uni = Integer.parseInt(JOptionPane.showInputDialog(null, "Que unidad desea consultar?" +
-                            "\nIngrese 1 -> Prioridad o 2 -> Normal"));
+                    int uni = Integer.parseInt(JOptionPane.showInputDialog(null, "Which unit do you want to check?" +
+                            "\nEnter 1 -> Priority o 2 -> Normal"));
                     if (uni == 1) {
                         if (queuePriorityG.length() <= 0) {
-                            JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                            JOptionPane.showMessageDialog(null, "There are no patient entered yet!");
                         } else {
                             String priority = queuePriorityG.print();
                             JOptionPane.showMessageDialog(null, priority);
                         }
                     } else if (uni == 2) {
                         if (queueG.length() <= 0) {
-                            JOptionPane.showMessageDialog(null, "No se ha ingresado ningun paciente!");
+                            JOptionPane.showMessageDialog(null, "There are no patient entered yet!");
                         } else {
                             String normalQueue = queueG.print();
                             JOptionPane.showMessageDialog(null, normalQueue);
@@ -497,7 +509,7 @@ public class Main {
                 }
             }
         } else if (count == 0) {
-            JOptionPane.showMessageDialog(null, "No ha ingresado ni salido ningun paciente");
+            JOptionPane.showMessageDialog(null, "There are no patient entered yet!");
         }
 
     }
