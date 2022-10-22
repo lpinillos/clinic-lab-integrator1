@@ -18,8 +18,6 @@ Luis Fernando Pinillos / A00381323
 
  */
 public class Main {
-
-    private static final Scanner sc = new Scanner(System.in);
     private static ChainHashTable<String, Patient> patients;
     private static Heap<String> queuePriorityG;
     private static Heap<String> queueG;
